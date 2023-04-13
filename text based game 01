@@ -1,0 +1,72 @@
+import random
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.health = 100
+        self.attack = 5
+
+    def __str__(self):
+        return f"Name: {self.name}\nHealth: {self.health}\nAttack: {self.attack}\n"
+
+class Enemy:
+    def __init__(self, name, health, attack):
+        self.name = name
+        self.health = health
+        self.attack = attack
+
+    def __str__(self):
+        return f"Name: {self.name}\nHealth: {self.health}\nAttack: {self.attack}\n"
+
+class Game:
+    def __init__(self, player):
+        self.player = player
+        self.enemies = []
+
+    def create_enemy(self, name):
+        health = random.randint(1, 100)
+        attack = random.randint(1, 10)
+        enemy = Enemy(name, health, attack)
+        self.enemies.append(enemy)
+
+    def start(self):
+        print(f"Welcome, {self.player.name}! A horde of enemies is attacking the village. Defeat them to save the village!")
+        while True:
+            action = input("Enter an action (fight, rest, quit): ")
+            if action == "fight":
+                enemy = random.choice(self.enemies)
+                print(f"You encountered an enemy: {enemy}.")
+                while True:
+                    self.player.health -= enemy.attack
+                    enemy.health -= self.player.attack
+                    print(f"You attacked {enemy.name} for {self.player.attack} damage.")
+                    print(f"{enemy.name} attacked you for {enemy.attack} damage.")
+                    if self.player.health <= 0:
+                        print("You died. Game over.")
+                        return
+                    if enemy.health <= 0:
+                        print(f"You defeated {enemy.name}!")
+                        self.enemies.remove(enemy)
+                        if not self.enemies:
+                            print("You saved the village. Congratulations!")
+                            return
+                        break
+            elif action == "rest":
+                self.player.health = min(self.player.health + 10, 100)
+                print(f"You rested and regained 10 health. Your health is now {self.player.health}.")
+            elif action == "quit":
+                print("Thanks for playing!")
+                return
+            else:
+                print("Invalid action. Please enter fight, rest, or quit.")
+
+# Example usage
+player_name = input("Enter your name: ")
+player = Player(player_name)
+
+game = Game(player)
+game.create_enemy("Zombie")
+game.create_enemy("Skeleton")
+game.create_enemy("Goblin")
+
+game.start()
