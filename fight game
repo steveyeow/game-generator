@@ -1,0 +1,105 @@
+import random
+
+class Character:
+    def __init__(self, name, story, weapon, health, attack, defense):
+        self.name = name
+        self.story = story
+        self.weapon = weapon
+        self.health = health
+        self.attack = attack
+        self.defense = defense
+
+    def __str__(self):
+        return f"Name: {self.name}\nStory: {self.story}\nWeapon: {self.weapon}\nHealth: {self.health}\nAttack: {self.attack}\nDefense: {self.defense}\n"
+
+    def fight(self, opponent):
+        damage = max(self.attack - opponent.defense, 0)
+        opponent.health -= damage
+        print(f"{self.name} attacked {opponent.name} with {self.weapon}, dealing {damage} damage!")
+        if opponent.health <= 0:
+            print(f"{opponent.name} died!")
+            return self
+        else:
+            return None
+
+class Game:
+    def __init__(self):
+        self.characters = []
+        self.battle_list = []
+
+    def main_menu(self):
+        while True:
+            print()
+            print("==== Main Menu ====")
+            print("1. Create a new character")
+            print("2. View characters")
+            print("3. Start a battle")
+            print("4. View battle list")
+            print("5. Exit")
+            choice = input("Enter your choice (1-5): ")
+            if choice == "1":
+                self.create_character()
+            elif choice == "2":
+                self.view_characters()
+            elif choice == "3":
+                self.start_battle()
+            elif choice == "4":
+                self.view_battle_list()
+            elif choice == "5":
+                print("Thanks for playing!")
+                break
+            else:
+                print("Invalid choice!")
+
+    def create_character(self):
+        print()
+        print("==== Create a new character ====")
+        name = input("Enter your character's name: ")
+        story = input("Enter your character's backstory: ")
+        weapon = input("Enter your character's weapon: ")
+        health = int(input("Enter your character's health: "))
+        attack = int(input("Enter your character's attack: "))
+        defense = int(input("Enter your character's defense: "))
+        character = Character(name, story, weapon, health, attack, defense)
+        self.characters.append(character)
+        print(f"Character {character.name} created!")
+
+    def view_characters(self):
+        print()
+        print("==== View characters ====")
+        for character in self.characters:
+            print(character)
+
+    def start_battle(self):
+        print()
+        print("==== Start a battle ====")
+        self.view_characters()
+        index1 = int(input("Enter the index of the first character (0-based): "))
+        index2 = int(input("Enter the index of the second character (0-based): "))
+        character1 = self.characters[index1]
+        character2 = self.characters[index2]
+        print(f"{character1.name} fights {character2.name}!")
+        while True:
+            winner = character1.fight(character2)
+            if winner:
+                self.battle_list.append((character1.name, character2.name, winner.name))
+                print(f"{winner.name} won the battle!")
+                break
+            winner = character2.fight(character1)
+            if winner:
+                self.battle_list.append((character1.name, character2.name, winner.name))
+                print(f"{winner.name} won the battle!")
+                break
+
+    def view_battle_list(self):
+        print()
+        print("==== View battle list ====")
+        if not self.battle_list:
+            print("There are no battles in the list.")
+        else:
+            for battle in self.battle_list:
+                print(f"{battle[0]} fights {battle[1]}: {battle[2]} wins!")
+
+# Example usage
+game = Game()
+game.main_menu()
